@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface ExternalVideoPlayerProps {
   videoUrl: string;
@@ -43,7 +43,8 @@ export default function ExternalVideoPlayer({
     replies: "Replies"
   }
 }: ExternalVideoPlayerProps) {
-  const [embedUrl, setEmbedUrl] = useState<string>("");
+  const tweetContainerRef = useRef<HTMLDivElement>(null);
+  const [tweetLoaded, setTweetLoaded] = useState(false);
 
   const getEmbedUrl = (url: string): { embedUrl: string; type: "youtube" | "twitter" | "unknown" } => {
     // YouTube
@@ -72,6 +73,35 @@ export default function ExternalVideoPlayer({
   };
 
   const { embedUrl: finalEmbedUrl, type } = getEmbedUrl(videoUrl);
+
+  useEffect(() => {
+    if (type === "twitter" && tweetContainerRef.current) {
+      // Load Twitter widgets script
+      const script = document.createElement("script");
+      script.src = "https://platform.twitter.com/widgets.js";
+      script.async = true;
+      script.onload = () => {
+        // @ts-ignore
+        if (window.twttr) {
+          // @ts-ignore
+          window.twttr.widgets.load(tweetContainerRef.current);
+          setTweetLoaded(true);
+        }
+      };
+
+      // Check if script already exists
+      if (!document.querySelector('script[src="https://platform.twitter.com/widgets.js"]')) {
+        document.body.appendChild(script);
+      } else {
+        // @ts-ignore
+        if (window.twttr) {
+          // @ts-ignore
+          window.twttr.widgets.load(tweetContainerRef.current);
+          setTweetLoaded(true);
+        }
+      }
+    }
+  }, [type]);
 
   return (
     <div className="w-full">
@@ -113,11 +143,15 @@ export default function ExternalVideoPlayer({
           )}
 
           {type === "twitter" && (
-            <div className="w-full aspect-video flex items-center justify-center p-6">
-              <blockquote className="twitter-tweet" data-theme="dark">
-                <a href={videoUrl}>Loading tweet...</a>
+            <div
+              ref={tweetContainerRef}
+              className="w-full min-h-[500px] flex items-center justify-center p-6 bg-zinc-950"
+            >
+              <blockquote className="twitter-tweet" data-theme="dark" data-dnt="true">
+                <a href={finalEmbedUrl}>
+                  {tweetLoaded ? "Loading tweet..." : "Loading..."}
+                </a>
               </blockquote>
-              <script async src="https://platform.twitter.com/widgets.js" charSet="utf-8"></script>
             </div>
           )}
 
