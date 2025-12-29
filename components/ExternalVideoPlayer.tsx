@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 
 interface ExternalVideoPlayerProps {
   videoUrl: string;
@@ -43,8 +43,8 @@ export default function ExternalVideoPlayer({
     replies: "Replies"
   }
 }: ExternalVideoPlayerProps) {
-  const tweetContainerRef = useRef<HTMLDivElement>(null);
-  const [tweetLoaded, setTweetLoaded] = useState(false);
+  const [embedHtml, setEmbedHtml] = useState<string>("");
+  const [embedLoading, setEmbedLoading] = useState(false);
 
   const getEmbedUrl = (url: string): { embedUrl: string; type: "youtube" | "twitter" | "unknown" } => {
     // YouTube
@@ -75,33 +75,44 @@ export default function ExternalVideoPlayer({
   const { embedUrl: finalEmbedUrl, type } = getEmbedUrl(videoUrl);
 
   useEffect(() => {
-    if (type === "twitter" && tweetContainerRef.current) {
+    if (type === "twitter") {
+      setEmbedLoading(true);
+
+      // Fetch embed HTML from our API
+      fetch(`/api/twitter-embed?url=${encodeURIComponent(finalEmbedUrl)}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.html) {
+            setEmbedHtml(data.html);
+          }
+          setEmbedLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error loading Twitter embed:", error);
+          setEmbedLoading(false);
+        });
+
       // Load Twitter widgets script
       const script = document.createElement("script");
       script.src = "https://platform.twitter.com/widgets.js";
       script.async = true;
-      script.onload = () => {
-        // @ts-ignore
-        if (window.twttr) {
-          // @ts-ignore
-          window.twttr.widgets.load(tweetContainerRef.current);
-          setTweetLoaded(true);
-        }
-      };
 
-      // Check if script already exists
       if (!document.querySelector('script[src="https://platform.twitter.com/widgets.js"]')) {
         document.body.appendChild(script);
-      } else {
-        // @ts-ignore
-        if (window.twttr) {
-          // @ts-ignore
-          window.twttr.widgets.load(tweetContainerRef.current);
-          setTweetLoaded(true);
-        }
       }
     }
-  }, [type]);
+  }, [type, finalEmbedUrl]);
+
+  useEffect(() => {
+    // Reload Twitter widgets when embedHtml changes
+    if (embedHtml && type === "twitter") {
+      // @ts-ignore
+      if (window.twttr?.widgets) {
+        // @ts-ignore
+        window.twttr.widgets.load();
+      }
+    }
+  }, [embedHtml, type]);
 
   return (
     <div className="w-full">
@@ -143,15 +154,30 @@ export default function ExternalVideoPlayer({
           )}
 
           {type === "twitter" && (
-            <div
-              ref={tweetContainerRef}
-              className="w-full min-h-[500px] flex items-center justify-center p-6 bg-zinc-950"
-            >
-              <blockquote className="twitter-tweet" data-theme="dark" data-dnt="true">
-                <a href={finalEmbedUrl}>
-                  {tweetLoaded ? "Loading tweet..." : "Loading..."}
-                </a>
-              </blockquote>
+            <div className="w-full min-h-[500px] flex items-center justify-center p-6 bg-zinc-950">
+              {embedLoading ? (
+                <div className="flex flex-col items-center gap-4">
+                  <div className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
+                  <p className="text-zinc-400">Loading tweet...</p>
+                </div>
+              ) : embedHtml ? (
+                <div
+                  className="twitter-embed-container max-w-full"
+                  dangerouslySetInnerHTML={{ __html: embedHtml }}
+                />
+              ) : (
+                <div className="text-center">
+                  <p className="text-zinc-400 mb-4">Failed to load tweet</p>
+                  <a
+                    href={finalEmbedUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-purple-400 hover:text-purple-300 underline"
+                  >
+                    View on X/Twitter
+                  </a>
+                </div>
+              )}
             </div>
           )}
 
