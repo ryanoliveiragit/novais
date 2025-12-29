@@ -1,0 +1,234 @@
+{
+  "site": {
+    "title": "VideoAlchemist",
+    "logo": {
+      "short": "VA",
+      "full": "VideoAlchemist"
+    }
+  },
+  "navigation": {
+    "links": [
+      {
+        "label": "Home",
+        "href": "#home"
+      },
+      {
+        "label": "About",
+        "href": "#about"
+      },
+      {
+        "label": "Services",
+        "href": "#services"
+      },
+      {
+        "label": "Portfolio",
+        "href": "#portfolio"
+      },
+      {
+        "label": "Contact",
+        "href": "#contact"
+      }
+    ],
+    "social": [
+      {
+        "name": "Twitter",
+        "href": "https://twitter.com",
+        "icon": "twitter"
+      },
+      {
+        "name": "GitHub",
+        "href": "https://github.com",
+        "icon": "github"
+      },
+      {
+        "name": "LinkedIn",
+        "href": "https://linkedin.com",
+        "icon": "linkedin"
+      }
+    ]
+  },
+  "hero": {
+    "badge": {
+      "text": "Available for work",
+      "show": true
+    },
+    "title": {
+      "line1": "Professional",
+      "line2": "Video Editor"
+    },
+    "description": "Transform your content with professional video editing. Making your videos stand out.",
+    "buttons": {
+      "primary": {
+        "text": "Let's talk",
+        "href": "#contact"
+      },
+      "secondary": {
+        "text": "View portfolio",
+        "href": "#portfolio"
+      }
+    },
+    "stats": [
+      {
+        "value": "100+",
+        "label": "Projects"
+      },
+      {
+        "value": "50+",
+        "label": "Clients"
+      },
+      {
+        "value": "5+",
+        "label": "Years"
+      }
+    ]
+  },
+  "video": {
+    "title": "Latest Edit",
+    "showLiveBadge": true,
+    "tweetUrl": "https://x.com/Jsuhauashsz/status/2002461822516085213?s=20",
+    "tweetId": "2002461822516085213",
+    "videoPath": "/hl.mp4",
+    "viewOnXText": "View on X",
+    "statsLabels": {
+      "views": "Views",
+      "likes": "Likes",
+      "retweets": "Retweets",
+      "replies": "Replies"
+    }
+  },
+  "about": {
+    "title": "About Me",
+    "description": "I'm a passionate video editor with over 5 years of experience creating engaging content for brands, influencers, and content creators worldwide.",
+    "highlights": [
+      {
+        "title": "Creative Vision",
+        "description": "Bringing unique perspectives to every project"
+      },
+      {
+        "title": "Fast Turnaround",
+        "description": "Quick delivery without compromising quality"
+      },
+      {
+        "title": "Client Focused",
+        "description": "Your satisfaction is my top priority"
+      }
+    ]
+  },
+  "services": {
+    "title": "Services",
+    "subtitle": "What I Offer",
+    "items": [
+      {
+        "title": "Video Editing",
+        "description": "Professional editing for YouTube, social media, and commercial content",
+        "icon": "video"
+      },
+      {
+        "title": "Color Grading",
+        "description": "Cinematic color correction and grading to enhance your footage",
+        "icon": "color"
+      },
+      {
+        "title": "Motion Graphics",
+        "description": "Eye-catching animations and motion design for your videos",
+        "icon": "motion"
+      },
+      {
+        "title": "Audio Mixing",
+        "description": "Crystal clear audio mixing and sound design",
+        "icon": "audio"
+      }
+    ]
+  },
+  "tools": {
+    "title": "Tools & Software",
+    "subtitle": "What I Use",
+    "items": [
+      {
+        "name": "After Effects",
+        "category": "Motion Graphics",
+        "logo": "ae"
+      },
+      {
+        "name": "Sony Vegas",
+        "category": "Video Editing",
+        "logo": "vegas"
+      },
+      {
+        "name": "Premiere Pro",
+        "category": "Video Editing",
+        "logo": "premiere"
+      },
+      {
+        "name": "DaVinci Resolve",
+        "category": "Color Grading",
+        "logo": "davinci"
+      }
+    ]
+  },
+  "portfolio": {
+    "title": "Portfolio",
+    "subtitle": "Recent Work",
+    "projects": [
+      {
+        "title": "Gaming Highlights",
+        "category": "YouTube Content",
+        "thumbnail": "/portfolio-1.jpg",
+        "videoPath": "/hl.mp4"
+      },
+      {
+        "title": "Brand Commercial",
+        "category": "Commercial",
+        "thumbnail": "/portfolio-2.jpg",
+        "videoPath": "/hl.mp4"
+      },
+      {
+        "title": "Music Video",
+        "category": "Music",
+        "thumbnail": "/portfolio-3.jpg",
+        "videoPath": "/hl.mp4"
+      },
+      {
+        "title": "Product Review",
+        "category": "Review",
+        "thumbnail": "/portfolio-4.jpg",
+        "videoPath": "/hl.mp4"
+      }
+    ]
+  },
+  "contact": {
+    "title": "Let's Work Together",
+    "description": "Have a project in mind? Let's discuss how I can help bring your vision to life.",
+    "email": "contact@videoalchemist.com",
+    "methods": [
+      {
+        "platform": "Email",
+        "handle": "contact@videoalchemist.com",
+        "icon": "email"
+      },
+      {
+        "platform": "Discord",
+        "handle": "videoalchemist#1234",
+        "icon": "discord"
+      },
+      {
+        "platform": "Twitter",
+        "handle": "@videoalchemist",
+        "icon": "twitter"
+      }
+    ]
+  },
+  "footer": {
+    "copyright": "© 2025 VideoAlchemist. All rights reserved.",
+    "links": [
+      {
+        "label": "Privacy Policy",
+        "href": "/privacy"
+      },
+      {
+        "label": "Terms of Service",
+        "href": "/terms"
+      }
+    ]
+  }
+}
