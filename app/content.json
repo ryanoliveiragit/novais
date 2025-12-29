@@ -87,14 +87,15 @@
     "showLiveBadge": true,
     "tweetUrl": "https://x.com/Jsuhauashsz/status/2002461822516085213?s=20",
     "tweetId": "2002461822516085213",
-    "videoPath": "/hl.mp4",
+    "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     "viewOnXText": "View on X",
     "statsLabels": {
       "views": "Views",
       "likes": "Likes",
       "retweets": "Retweets",
       "replies": "Replies"
-    }
+    },
+    "_comment": "videoUrl aceita: URLs do YouTube (youtube.com/watch?v=ID ou youtu.be/ID), URLs do Twitter/X (x.com/user/status/ID), ou caminhos locais (/video.mp4)"
   },
   "about": {
     "title": "About Me",
@@ -174,27 +175,32 @@
         "title": "Gaming Highlights",
         "category": "YouTube Content",
         "thumbnail": "/portfolio-1.jpg",
-        "videoPath": "/hl.mp4"
+        "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        "_comment": "Exemplo com YouTube"
       },
       {
         "title": "Brand Commercial",
         "category": "Commercial",
         "thumbnail": "/portfolio-2.jpg",
-        "videoPath": "/hl.mp4"
+        "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        "_comment": "Exemplo com YouTube"
       },
       {
         "title": "Music Video",
         "category": "Music",
         "thumbnail": "/portfolio-3.jpg",
-        "videoPath": "/hl.mp4"
+        "videoUrl": "https://x.com/username/status/123456789",
+        "_comment": "Exemplo com Twitter/X"
       },
       {
         "title": "Product Review",
         "category": "Review",
         "thumbnail": "/portfolio-4.jpg",
-        "videoPath": "/hl.mp4"
+        "videoUrl": "/hl.mp4",
+        "_comment": "Exemplo com vídeo local"
       }
-    ]
+    ],
+    "_comment": "videoUrl aceita: URLs do YouTube, URLs do Twitter/X, ou caminhos locais"
   },
   "contact": {
     "title": "Let's Work Together",

@@ -1,8 +1,10 @@
 "use client";
 
 import { Orbitron } from "next/font/google";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import content from "./content.json";
+import ExternalVideoPlayer from "@/components/ExternalVideoPlayer";
+import PortfolioVideoCard from "@/components/PortfolioVideoCard";
 
 const orbitron = Orbitron({ subsets: ["latin"] });
 
@@ -14,20 +16,12 @@ export default function Home() {
     replies: "0"
   });
   const [isLoading, setIsLoading] = useState(true);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(true);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const [volume, setVolume] = useState(1);
-  const [hoveredProject, setHoveredProject] = useState<number | null>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const portfolioVideoRefs = useRef<(HTMLVideoElement | null)[]>([]);
 
   useEffect(() => {
     const fetchTweetData = async () => {
       try {
         await new Promise(resolve => setTimeout(resolve, 1000));
-        
+
         setTweetData({
           views: "1.2M",
           likes: "45.2K",
@@ -43,82 +37,6 @@ export default function Home() {
 
     fetchTweetData();
   }, []);
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    const updateTime = () => setCurrentTime(video.currentTime);
-    const updateDuration = () => setDuration(video.duration);
-
-    video.addEventListener('timeupdate', updateTime);
-    video.addEventListener('loadedmetadata', updateDuration);
-
-    return () => {
-      video.removeEventListener('timeupdate', updateTime);
-      video.removeEventListener('loadedmetadata', updateDuration);
-    };
-  }, []);
-
-  const togglePlay = () => {
-    if (videoRef.current) {
-      if (isPlaying) {
-        videoRef.current.pause();
-      } else {
-        videoRef.current.play();
-      }
-      setIsPlaying(!isPlaying);
-    }
-  };
-
-  const toggleMute = () => {
-    if (videoRef.current) {
-      videoRef.current.muted = !isMuted;
-      setIsMuted(!isMuted);
-    }
-  };
-
-  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newVolume = parseFloat(e.target.value);
-    setVolume(newVolume);
-    if (videoRef.current) {
-      videoRef.current.volume = newVolume;
-      if (newVolume === 0) {
-        setIsMuted(true);
-        videoRef.current.muted = true;
-      } else if (isMuted) {
-        setIsMuted(false);
-        videoRef.current.muted = false;
-      }
-    }
-  };
-
-  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const time = parseFloat(e.target.value);
-    setCurrentTime(time);
-    if (videoRef.current) {
-      videoRef.current.currentTime = time;
-    }
-  };
-
-  const formatTime = (time: number) => {
-    const minutes = Math.floor(time / 60);
-    const seconds = Math.floor(time % 60);
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
-  };
-
-  const handleProjectHover = (index: number, isHovering: boolean) => {
-    setHoveredProject(isHovering ? index : null);
-    const video = portfolioVideoRefs.current[index];
-    if (video) {
-      if (isHovering) {
-        video.play();
-      } else {
-        video.pause();
-        video.currentTime = 0;
-      }
-    }
-  };
 
   const getServiceIcon = (iconType: string) => {
     switch (iconType) {
@@ -248,172 +166,16 @@ export default function Home() {
 
           {/* Right Side - Video Player */}
           <div className="lg:col-span-7">
-            <div className="w-full">
-              <div className="bg-zinc-900 rounded-2xl border border-zinc-800 overflow-hidden">
-                
-                {/* Video Header */}
-                <div className="px-5 py-3.5 border-b border-zinc-800 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    {content.video.showLiveBadge && (
-                      <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                    )}
-                    <span className="text-sm text-zinc-300 font-medium">{content.video.title}</span>
-                  </div>
-                  <a 
-                    href={content.video.tweetUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors text-sm"
-                  >
-                    <span className="hidden sm:inline">{content.video.viewOnXText}</span>
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                    </svg>
-                  </a>
-                </div>
-                
-                {/* Video Player */}
-                <div className="relative bg-black group">
-                  <video
-                    ref={videoRef}
-                    className="w-full aspect-video object-cover"
-                    loop
-                    playsInline
-                    onClick={togglePlay}
-                  >
-                    <source src={content.video.videoPath} type="video/mp4" />
-                  </video>
-
-                  {/* Play/Pause Overlay */}
-                  {!isPlaying && (
-                    <div 
-                      className="absolute inset-0 flex items-center justify-center bg-black/40 cursor-pointer"
-                      onClick={togglePlay}
-                    >
-                      <div className="w-16 h-16 rounded-full bg-purple-600 hover:bg-purple-700 flex items-center justify-center transition-all transform hover:scale-110">
-                        <svg className="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M8 5v14l11-7z"/>
-                        </svg>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Custom Controls */}
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                    {/* Progress Bar */}
-                    <div className="mb-3">
-                      <input
-                        type="range"
-                        min="0"
-                        max={duration || 0}
-                        value={currentTime}
-                        onChange={handleSeek}
-                        className="w-full h-1 bg-zinc-700 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-purple-500"
-                      />
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4">
-                        <button
-                          onClick={togglePlay}
-                          className="text-white hover:text-purple-400 transition-colors"
-                        >
-                          {isPlaying ? (
-                            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                              <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
-                            </svg>
-                          ) : (
-                            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                              <path d="M8 5v14l11-7z"/>
-                            </svg>
-                          )}
-                        </button>
-
-                        <div className="flex items-center gap-2">
-                          <button
-                            onClick={toggleMute}
-                            className="text-white hover:text-purple-400 transition-colors"
-                          >
-                            {isMuted || volume === 0 ? (
-                              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
-                              </svg>
-                            ) : (
-                              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
-                              </svg>
-                            )}
-                          </button>
-                          <input
-                            type="range"
-                            min="0"
-                            max="1"
-                            step="0.1"
-                            value={volume}
-                            onChange={handleVolumeChange}
-                            className="w-20 h-1 bg-zinc-700 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-purple-500"
-                          />
-                        </div>
-
-                        <div className="text-white text-sm font-medium">
-                          {formatTime(currentTime)} / {formatTime(duration)}
-                        </div>
-                      </div>
-
-                      <button
-                        onClick={() => videoRef.current?.requestFullscreen()}
-                        className="text-white hover:text-purple-400 transition-colors"
-                      >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Stats */}
-                <div className="px-6 py-5 border-t border-zinc-800">
-                  <div className="grid grid-cols-4 gap-4 text-center">
-                    <div className="space-y-1">
-                      {isLoading ? (
-                        <div className="h-5 bg-zinc-800 rounded animate-pulse mx-auto w-12" />
-                      ) : (
-                        <div className="text-lg font-bold text-white">{tweetData.views}</div>
-                      )}
-                      <div className="text-xs text-zinc-500 uppercase tracking-wider">{content.video.statsLabels.views}</div>
-                    </div>
-
-                    <div className="space-y-1">
-                      {isLoading ? (
-                        <div className="h-5 bg-zinc-800 rounded animate-pulse mx-auto w-12" />
-                      ) : (
-                        <div className="text-lg font-bold text-white">{tweetData.likes}</div>
-                      )}
-                      <div className="text-xs text-zinc-500 uppercase tracking-wider">{content.video.statsLabels.likes}</div>
-                    </div>
-
-                    <div className="space-y-1">
-                      {isLoading ? (
-                        <div className="h-5 bg-zinc-800 rounded animate-pulse mx-auto w-12" />
-                      ) : (
-                        <div className="text-lg font-bold text-white">{tweetData.retweets}</div>
-                      )}
-                      <div className="text-xs text-zinc-500 uppercase tracking-wider">{content.video.statsLabels.retweets}</div>
-                    </div>
-
-                    <div className="space-y-1">
-                      {isLoading ? (
-                        <div className="h-5 bg-zinc-800 rounded animate-pulse mx-auto w-12" />
-                      ) : (
-                        <div className="text-lg font-bold text-white">{tweetData.replies}</div>
-                      )}
-                      <div className="text-xs text-zinc-500 uppercase tracking-wider">{content.video.statsLabels.replies}</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <ExternalVideoPlayer
+              videoUrl={content.video.videoUrl}
+              tweetUrl={content.video.tweetUrl}
+              title={content.video.title}
+              showLiveBadge={content.video.showLiveBadge}
+              viewOnXText={content.video.viewOnXText}
+              tweetData={tweetData}
+              isLoading={isLoading}
+              statsLabels={content.video.statsLabels}
+            />
           </div>
         </div>
       </section>
@@ -495,43 +257,13 @@ export default function Home() {
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {content.portfolio.projects.map((project, index) => (
-            <div 
-              key={index} 
-              className="group relative aspect-video bg-zinc-900 rounded-xl overflow-hidden border border-zinc-800 hover:border-purple-500/50 transition-colors cursor-pointer"
-              onMouseEnter={() => handleProjectHover(index, true)}
-              onMouseLeave={() => handleProjectHover(index, false)}
-            >
-              {/* Video Preview */}
-              <video
-                ref={(el) => (portfolioVideoRefs.current[index] = el)}
-                className="absolute inset-0 w-full h-full object-cover"
-                loop
-                muted
-                playsInline
-              >
-                <source src={project.videoPath} type="video/mp4" />
-              </video>
-
-              {/* Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10"></div>
-              
-              {/* Play Icon */}
-              {hoveredProject !== index && (
-                <div className="absolute inset-0 flex items-center justify-center z-20">
-                  <div className="w-16 h-16 rounded-full bg-purple-600/80 backdrop-blur-sm flex items-center justify-center">
-                    <svg className="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M8 5v14l11-7z"/>
-                    </svg>
-                  </div>
-                </div>
-              )}
-
-              {/* Info */}
-              <div className="absolute bottom-0 left-0 right-0 p-6 z-20">
-                <p className="text-purple-400 text-sm font-medium mb-1">{project.category}</p>
-                <h3 className="text-xl font-bold text-white">{project.title}</h3>
-              </div>
-            </div>
+            <PortfolioVideoCard
+              key={index}
+              title={project.title}
+              category={project.category}
+              videoUrl={project.videoUrl}
+              index={index}
+            />
           ))}
         </div>
       </section>
